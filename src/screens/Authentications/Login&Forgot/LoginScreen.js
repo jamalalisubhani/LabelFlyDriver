@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -15,8 +16,14 @@ import RememberMeCheckbox from "../../../components/RememberMeCheckbox";
 import Button from "../../../components/Button";
 import ContinueWithButton from "../../../components/ContinueWithButton";
 import SocialLogin from "../../../components/SocialLogin";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../../redux/reducers/userReducer";
+import { loginApi } from "../../../utils/auth.service";
+import { useFormik } from "formik";
+import { loginSch } from "../../../utils/validation";
 
 export default function LoginScreen({ navigation }) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,6 +33,30 @@ export default function LoginScreen({ navigation }) {
   const handlePasswordChange = (text) => {
     setPassword(text);
   };
+
+  const login = async () => {
+    setloading(true);
+  };
+
+  const formik = useFormik({
+    validationSchema: loginSch,
+    initialValues: {
+      email: "",
+      password: "",
+    },
+
+    onSubmit: async (values) => {
+      loginApi({
+        email: values.email,
+        password: values.password,
+      })
+        .then((res) => {
+          dispatch(setUser(res.data));
+        })
+        .catch(() => {})
+        .finally(() => {});
+    },
+  });
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -56,15 +87,33 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.logintoAccount}>Login to Your Account</Text>
 
             <View style={styles.inputsContainer}>
+              {formik.errors.email && (
+                <View style={{ paddingHorizontal: 22, paddingVertical: 4 }}>
+                  <Text style={{ color: "red", fontSize: 10 }}>
+                    {formik.errors.email}
+                  </Text>
+                </View>
+              )}
               <CustomTextInput
-                value={email}
-                onChangeText={handleEmailChange}
+                onChangeText={formik.handleChange("email")}
+                value={formik.values.email}
+                // value={email}
+                // onChangeText={handleEmailChange}
                 placeholder="Email"
               />
+              {formik.errors.password && (
+                <View style={{ paddingHorizontal: 22, paddingVertical: 4 }}>
+                  <Text style={{ color: "red", fontSize: 10 }}>
+                    {formik.errors.password}
+                  </Text>
+                </View>
+              )}
 
               <CustomTextInput
-                value={password}
-                onChangeText={handlePasswordChange}
+                onChangeText={formik.handleChange("password")}
+                value={formik.values.password}
+                // value={password}
+                // onChangeText={handlePasswordChange}
                 placeholder="Password"
                 secureTextEntry
               />
@@ -77,9 +126,12 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <View style={styles.loginButtonContainer}>
-            <Button 
-            onPress={() => navigation.navigate('tabs')}
-             title="Log In" />
+            <Button
+              onPress={() => {
+                formik.handleSubmit();
+              }}
+              title={"Log in"}
+            />
           </View>
 
           <TouchableOpacity
@@ -98,9 +150,7 @@ export default function LoginScreen({ navigation }) {
             <SocialLogin icon={require("../../../assets/icons/apple.png")} />
           </View>
 
-          <Pressable
-          onPress={()=>navigation.navigate('RegisterScreenName')}
-          >
+          <Pressable onPress={() => navigation.navigate("RegisterScreenName")}>
             <Text style={styles.footerLine}>
               Don’t have an account?{" "}
               <Text

@@ -22,50 +22,93 @@ import RegisterUploadRegistrationPhotoScreen from "../screens/Authentications/Re
 import RegisterUploadSelfieScreen from "../screens/Authentications/Register/RegisterUploadSelfieScreen";
 import VehicleInformationScreen from "../screens/Profile/VehicleInformationScreen";
 import MyDocumentsScreen from "../screens/Profile/MyDocumentsScreen";
+import { useDispatch, useSelector } from "react-redux";
 
 const Stack = createNativeStackNavigator();
 function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-
         {/* <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       */}
-     {/* Login and Forgot Password Screen */}
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
-        <Stack.Screen name="ForgotPasswordCodeConfirmationScreen" component={ForgotPasswordCodeConfirmationScreen} />
-        <Stack.Screen name="CreateNewPasswordScreen" component={CreateNewPasswordScreen} />
-         
+        {/* Login and Forgot Password Screen */}
+
+        {/* <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen
+              name="ForgotPasswordScreen"
+              component={ForgotPasswordScreen}
+            />
+            <Stack.Screen
+              name="ForgotPasswordCodeConfirmationScreen"
+              component={ForgotPasswordCodeConfirmationScreen}
+            />
+            <Stack.Screen
+              name="CreateNewPasswordScreen"
+              component={CreateNewPasswordScreen}
+            /> */}
         {/* Register Screens */}
-        <Stack.Screen name="RegisterScreenName" component={RegisterScreenName} />
-        <Stack.Screen name="RegisterDetailsScreen" component={RegisterDetailsScreen} />
-        <Stack.Screen name="RegisterCreatePasswordScreen" component={RegisterCreatePasswordScreen} />
-        <Stack.Screen name="RegisterUploadPhotoScreen" component={RegisterUploadPhotoScreen} />
-        <Stack.Screen name="RegisterVehicleModelScreen" component={RegisterVehicleModelScreen} />
-        <Stack.Screen name="RegisterUploadInsurencePhotoScreen" component={RegisterUploadInsurencePhotoScreen} />
-        <Stack.Screen name="RegisterUploadRegistrationPhotoScreen" component={RegisterUploadRegistrationPhotoScreen} />
-        <Stack.Screen name="RegisterUploadSelfieScreen" component={RegisterUploadSelfieScreen} />
-        
-      
+        {/* <Stack.Screen
+              name="RegisterScreenName"
+              component={RegisterScreenName}
+            />
+            <Stack.Screen
+              name="RegisterDetailsScreen"
+              component={RegisterDetailsScreen}
+            />
+            <Stack.Screen
+              name="RegisterCreatePasswordScreen"
+              component={RegisterCreatePasswordScreen}
+            />
+            <Stack.Screen
+              name="RegisterUploadPhotoScreen"
+              component={RegisterUploadPhotoScreen}
+            />
+            <Stack.Screen
+              name="RegisterVehicleModelScreen"
+              component={RegisterVehicleModelScreen}
+            />
+            <Stack.Screen
+              name="RegisterUploadInsurencePhotoScreen"
+              component={RegisterUploadInsurencePhotoScreen}
+            />
+            <Stack.Screen
+              name="RegisterUploadRegistrationPhotoScreen"
+              component={RegisterUploadRegistrationPhotoScreen}
+            />
+            <Stack.Screen
+              name="RegisterUploadSelfieScreen"
+              component={RegisterUploadSelfieScreen}
+            /> */}
+
         {/* Tab screens */}
         {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
         <Stack.Screen name="tabs" component={Tabs} />
 
-     
-        
         {/* Profile  */}
-        <Stack.Screen name="AccountDetailScreen" component={AccountDetailScreen} />
+        <Stack.Screen
+          name="AccountDetailScreen"
+          component={AccountDetailScreen}
+        />
         <Stack.Screen name="AddressBookScreen" component={AddressBookScreen} />
-        <Stack.Screen name="LanguageSelectionScreen" component={LanguageSelectionScreen} />
-        <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+        <Stack.Screen
+          name="LanguageSelectionScreen"
+          component={LanguageSelectionScreen}
+        />
+        <Stack.Screen
+          name="NotificationScreen"
+          component={NotificationScreen}
+        />
         <Stack.Screen name="HelpCenterScreen" component={HelpCenterScreen} />
-        <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicyScreen} />
-        <Stack.Screen name="VehicleInformationScreen" component={VehicleInformationScreen} />
+        <Stack.Screen
+          name="PrivacyPolicyScreen"
+          component={PrivacyPolicyScreen}
+        />
+        <Stack.Screen
+          name="VehicleInformationScreen"
+          component={VehicleInformationScreen}
+        />
         <Stack.Screen name="MyDocumentsScreen" component={MyDocumentsScreen} />
-        
-
       </Stack.Navigator>
     </NavigationContainer>
   );

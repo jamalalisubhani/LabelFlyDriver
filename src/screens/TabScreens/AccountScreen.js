@@ -11,10 +11,14 @@ import {
 import React from "react";
 import { RFValue } from "react-native-responsive-fontsize";
 import ProfileItem from "../../components/Profile/ProfileItem";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../redux/reducers/userReducer";
 const { width } = Dimensions.get("window").width;
 
 export default function AccountScreen({ navigation }) {
+  const { user } = useSelector((state) => state.root.user);
+  const dispatch = useDispatch();
+  console.log("useruseruseruseruser", user?.data);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -43,14 +47,14 @@ export default function AccountScreen({ navigation }) {
             </ImageBackground>
           </TouchableOpacity>
 
-          <Text style={styles.fullNameText}>Full Name</Text>
+          <Text style={styles.fullNameText}>{user?.data?.name}</Text>
           <View style={styles.driverRatingsContainer}>
-        <Image 
-        style={styles.halfStar}
-        source={require('../../assets/icons/Profile/halfstar.png')}
-        />
+            <Image
+              style={styles.halfStar}
+              source={require("../../assets/icons/Profile/halfstar.png")}
+            />
 
-        <Text style={styles.ratingsText}>4.8 (86 reviews)</Text>
+            <Text style={styles.ratingsText}>4.8 (86 reviews)</Text>
           </View>
         </View>
 
@@ -98,7 +102,11 @@ export default function AccountScreen({ navigation }) {
           <ProfileItem
             icon={require("../../assets/icons/Profile/logout.png")}
             title="Logout"
-            onPress={() => navigation.navigate("LoginScreen")}
+            onPress={() => {
+              dispatch(setUser(null));
+
+              // navigation.navigate("LoginScreen")
+            }}
             isLastItem
           />
         </View>
@@ -106,7 +114,9 @@ export default function AccountScreen({ navigation }) {
     </View>
   );
 }
-
+<TouchableOpacity style={{ position: "absolute", top: "50%", zIndex: 10000 }}>
+  <Text>kjhkhkjh</Text>
+</TouchableOpacity>;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -167,25 +177,21 @@ const styles = StyleSheet.create({
   profileItemMainContainer: {
     marginTop: RFValue(22),
   },
-  halfStar:
-  {
-    width:20,
-    height:20,
-    resizeMode:"contain",
-    marginRight:10,
+  halfStar: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+    marginRight: 10,
   },
-  driverRatingsContainer:
-  {
-    flexDirection:"row",
-    alignItems:'center',
-    alignSelf:'center',
-    marginTop:8,
-
+  driverRatingsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 8,
   },
-  ratingsText:
-  {
-    color:'#424242',
-    fontFamily:'Medium',
-    fontSize:RFValue(12),
-  }
+  ratingsText: {
+    color: "#424242",
+    fontFamily: "Medium",
+    fontSize: RFValue(12),
+  },
 });

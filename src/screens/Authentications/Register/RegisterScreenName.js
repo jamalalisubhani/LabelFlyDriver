@@ -12,10 +12,15 @@ import React from "react";
 import HeaderRegister from "../../../components/HeaderRegister";
 import { RFValue } from "react-native-responsive-fontsize";
 import RegisterInput from "../../../components/RegisterInput";
+import { registerUser } from "../../../utils/auth.service";
+import { useDispatch, useSelector } from "react-redux";
+import { setRegisterData } from "../../../redux/reducers/generalDataReducer";
+import { Formik, useFormik } from "formik";
+import { regStep1 } from "../../../utils/validation";
 
-export default function RegisterScreenName({navigation}) {
-  const [name, setName] = React.useState("");
-  
+export default function RegisterScreenName({ navigation }) {
+  const { registerdata } = useSelector((state) => state.root.data);
+  const dispatch = useDispatch();
   const CustomButton = ({ imageSource, text, onPress }) => {
     return (
       <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
@@ -25,10 +30,20 @@ export default function RegisterScreenName({navigation}) {
     );
   };
 
-  const handleNext = () => {
-   
-    navigation.navigate('RegisterDetailsScreen')
-  };
+  const formik = useFormik({
+    validationSchema: regStep1,
+    initialValues: {
+      name: "",
+    },
+    onSubmit: async (values) => {
+      console.log("valuesvaluesvalues", values.name);
+      const copy = { ...registerdata };
+      dispatch(setRegisterData({ ...copy, name: values.name }));
+      console.log("firstfirstfirst", copy);
+      navigation.navigate("RegisterDetailsScreen");
+    },
+  });
+
   return (
     <ImageBackground
       style={styles.container}
@@ -55,13 +70,24 @@ export default function RegisterScreenName({navigation}) {
             <Text style={styles.whatsYourName}>What is your name? </Text>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.fullNameText}>Full Name</Text>
+              <Text
+                style={[
+                  styles.fullNameText,
+                  formik?.errors?.name && {
+                    color: "red",
+                  },
+                ]}
+              >
+                Full Name
+              </Text>
 
               <View>
                 <RegisterInput
                   keyboardType="default"
-                  value={name}
-                  onChangeText={setName}
+                  onChangeText={formik.handleChange("name")}
+                  value={formik.values.name}
+                  // value={name}
+                  // onChangeText={namefunc}
                   placeholder="Your Name"
                 />
               </View>
@@ -95,7 +121,9 @@ export default function RegisterScreenName({navigation}) {
         <TouchableOpacity
           style={styles.nextButtonContainer}
           activeOpacity={0.8}
-          onPress={handleNext}
+          onPress={formik.handleSubmit}
+
+          // onPress={handleNext}
         >
           <Image
             style={styles.nextButton}

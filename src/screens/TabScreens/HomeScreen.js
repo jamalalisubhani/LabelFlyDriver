@@ -16,8 +16,11 @@ const { width } = Dimensions.get("window");
 import { Feather } from "@expo/vector-icons";
 import { Image } from "react-native";
 import HomeTaskItem from "../../components/HomeTaskItem";
+import { useSelector } from "react-redux";
 
 export default function HomeScreen() {
+  // const { user } = useSelector((state) => state.root.user);
+  // console.log("useruseruseruser", user?.data?.data);
   const navigation = useNavigation();
   const [search, setSearch] = React.useState(true);
   const [switcha, setSwictha] = React.useState(true);

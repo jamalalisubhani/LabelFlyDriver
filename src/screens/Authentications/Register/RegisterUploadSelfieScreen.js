@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,31 +9,95 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Dimensions,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import HeaderRegister from "../../../components/HeaderRegister";
+import { Camera } from "expo-camera";
+
 import { RFValue } from "react-native-responsive-fontsize";
 import RegisterSuccessModal from "../../../components/RegisterSuccessModal";
 import { CircularProgress } from "react-native-circular-progress";
+import { photoApi, registerUser } from "../../../utils/auth.service";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setRegisterData } from "../../../redux/reducers/generalDataReducer";
+import { setUser } from "../../../redux/reducers/userReducer";
 
 const { width } = Dimensions.get("window");
 
 export default function RegisterUploadSelfieScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [cameraPermission, setCameraPermission] = useState(null);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const cameraRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [openCamera, setOpenCamera] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
+
   const [scanStatus, setScanStatus] = useState(
     "Take a selfie to confirm your identity"
   );
-  const [scanning, setScanning] = useState(false);
 
-  const openModal = () => {
-    setModalVisible(true);
+  const [scanning, setScanning] = useState(false);
+  const { registerdata } = useSelector((state) => state.root.data);
+  const dispatch = useDispatch();
+  const openModal = async () => {
+    setloading(true);
+    if (registerdata == "") {
+      handleOpenCamera();
+
+      setloading(false);
+    } else {
+      register(registerdata);
+    }
+  };
+  const register = async (val) => {
+    let prams = { ...val };
+    await registerUser(prams)
+      .then((val) => {
+        console.log("valvalval>>>--000--", val.data);
+        dispatch(setUser(val.data));
+      })
+      .catch((e) => {
+        console.log("valvalval>>>--eeeeeeeee--", e);
+      })
+      .finally(() => {
+        setloading(false);
+      });
+  };
+  const handleOpenCamera = async () => {
+    const { status } = await Camera.requestPermissionsAsync();
+    setCameraPermission(status === "granted");
+    setOpenCamera(true);
   };
 
   const closeModal = () => {
     setModalVisible(false);
   };
+  const handleTakePhoto = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
+      setCapturedPhoto(photo);
+      photoApi(photo)
+        .then((res) => {
+          console.log("jhkjhjhkjhskhdkjhk", res?.data?.data);
 
+          const copy = { ...registerdata };
+          dispatch(
+            setRegisterData({
+              ...copy,
+              photo: res?.data?.data,
+            })
+          );
+        })
+        .catch(() => {})
+        .finally(() => {});
+      setOpenCamera(false);
+    }
+  };
   const handleSelectFile = () => {
     setProgress(0);
     setScanStatus("Scanning...");
@@ -56,7 +120,17 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
       require("../../../assets/icons/Activity/activityprofile.png")
     );
   };
-
+  const handleCancel = () => {
+    setOpenCamera(false);
+    setCapturedPhoto(null);
+  };
+  const handleCameraSwitch = () => {
+    setCameraType(
+      cameraType === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back
+    );
+  };
   const CustomButton = ({ imageSource, text, onPress }) => {
     return (
       <TouchableOpacity
@@ -150,7 +224,7 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
           <CustomButton
             imageSource={require("../../../assets/icons/Camera.png")}
             text="Open Camera & Take Photo"
-            // onPress={handleOpenCamera}
+            onPress={handleOpenCamera}
           />
         </ScrollView>
 
@@ -161,15 +235,54 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={openModal}
-              activeOpacity={0.8}>
-              <Image
-                style={styles.nextButton}
-                source={require("../../../assets/icons/nextbutton2.png")}
-              />
+              onPress={() => {
+                console.log("jhkjhjhkjhskhdkjhk", capturedPhoto);
+
+                openModal();
+              }}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator
+                  style={styles.nextButton}
+                  size={"large"}
+                  color={"#0C4DA2"}
+                />
+              ) : (
+                <Image
+                  style={styles.nextButton}
+                  source={require("../../../assets/icons/nextbutton2.png")}
+                />
+              )}
             </TouchableOpacity>
           </View>
-
+          <Modal visible={openCamera} animationType="slide" transparent={false}>
+            {cameraPermission && (
+              <Camera style={styles.camera} type={cameraType} ref={cameraRef}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={handleCancel}
+                >
+                  <Text style={styles.closeButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.switchButton}
+                  onPress={handleCameraSwitch}
+                >
+                  <Image
+                    source={require("../../../assets/icons/loader.png")}
+                    style={styles.switchButtonIcon}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.captureButton}
+                  onPress={handleTakePhoto}
+                >
+                  <Text style={styles.captureButtonText}>Take Photo</Text>
+                </TouchableOpacity>
+              </Camera>
+            )}
+          </Modal>
           <RegisterSuccessModal
             isVisible={modalVisible}
             closeModal={closeModal}

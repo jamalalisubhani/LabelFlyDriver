@@ -59,7 +59,6 @@ export default function Tabs() {
                       ...styles.label,
                       color: "#0C4DA2",
                       fontFamily: "Bold",
-                    
                     }}
                   >
                     Home

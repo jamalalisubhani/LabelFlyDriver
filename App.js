@@ -1,10 +1,15 @@
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import React from "react";
 import { View, StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import { LogBox } from "react-native";
-import Navigation from "./src/navigation/Navigation";
+import Navigation from "./src/navigation/MainNavigation";
+import Routes from "./src/navigation/index";
 import SplashScreen from "./src/components/SplashScreen";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor, store } from "./src/redux/store";
+import { initialConfig } from "./src/utils/config";
 
 export default function App() {
   const [isReady, setIsReady] = React.useState(false);
@@ -26,6 +31,7 @@ export default function App() {
     setTimeout(() => {
       setIsReady(true);
     }, 2000);
+    initialConfig();
   }, []);
 
   if (!isReady) {
@@ -35,16 +41,20 @@ export default function App() {
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 0 : 0;
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#fff" }}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="dark-content"
-        />
-      </View>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <View style={{ flex: 1 }}>
+          <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#fff" }}>
+            <StatusBar
+              translucent
+              backgroundColor="transparent"
+              barStyle="dark-content"
+            />
+          </View>
 
-      <Navigation />
-    </View>
+          <Routes />
+        </View>
+      </PersistGate>
+    </Provider>
   );
 }

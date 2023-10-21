@@ -9,22 +9,31 @@ import {
   ScrollView,
   Dimensions,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import HeaderRegister from "../../../components/HeaderRegister";
 import { RFValue } from "react-native-responsive-fontsize";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
+import { useDispatch, useSelector } from "react-redux";
+import { setRegisterData } from "../../../redux/reducers/generalDataReducer";
+
 const { width } = Dimensions.get("window");
 
 import RegisterSuccessModal from "../../../components/RegisterSuccessModal";
-export default function RegisterUploadPhotoScreen({navigation}) {
+import { driverLicense } from "../../../utils/auth.service";
+import { BASE_URL } from "../../../config";
+export default function RegisterUploadPhotoScreen({ navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [openCamera, setOpenCamera] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
+  const [loading, setloading] = useState(false);
+  const [showerr, setshowerr] = useState(false);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
- 
+  const { registerdata } = useSelector((state) => state.root.data);
+  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
 
   const openModal = () => {
@@ -36,15 +45,18 @@ export default function RegisterUploadPhotoScreen({navigation}) {
   };
 
   const handleOpenCamera = async () => {
-    const { status } = await Camera.requestPermissionsAsync();
-    setCameraPermission(status === "granted");
+    // const { status } = await Camera.requestPermissionsAsync();
+    setCameraPermission(true);
     setOpenCamera(true);
   };
 
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
+      console.log("hkjhjkhkhhkjhjk", photo);
+      setImage(photo);
       setCapturedPhoto(photo);
+      setshowerr(false);
       setOpenCamera(false);
     }
   };
@@ -84,9 +96,12 @@ export default function RegisterUploadPhotoScreen({navigation}) {
       });
 
       if (!pickerResult.canceled) {
-        setImage(pickerResult.assets[0].uri);
+        console.log("-0-0-0-0-00->>>", pickerResult.assets[0]);
+        setshowerr(false);
+        setImage(pickerResult.assets[0]);
       }
     } catch (error) {
+      setshowerr(false);
       console.log("Error while selecting file:", error);
     }
   };
@@ -101,10 +116,44 @@ export default function RegisterUploadPhotoScreen({navigation}) {
   };
 
   const handleNext = () => {
-
-  openModal()
+    openModal();
   };
 
+  const next = () => {
+    setloading(true);
+    const copy = { ...registerdata };
+    let copy_driver = { ...copy.driver };
+
+    console.log("imageimage", image);
+    if (image == "") {
+      setshowerr(true);
+      setloading(false);
+
+      console.log("copycopycopycopy", copy);
+    } else {
+      console.log("calling");
+
+      driverLicense(image)
+        .then((res) => {
+          let newdriver = {
+            ...copy_driver,
+            license: res?.data?.data,
+            license_plate: 987987,
+          };
+          if (res?.data?.data) {
+            dispatch(setRegisterData({ ...copy, driver: newdriver }));
+            navigation.navigate("RegisterUploadInsurencePhotoScreen");
+          }
+        })
+        .catch((e) => {
+          console.log("==============>>|e", e);
+        })
+        .finally(() => {
+          setloading(false);
+        });
+    }
+    // image;
+  };
   return (
     <ImageBackground
       style={styles.container}
@@ -129,17 +178,23 @@ export default function RegisterUploadPhotoScreen({navigation}) {
             />
 
             <Text style={styles.whatsYourName}>
-            Take a photo of your{"\n"}driver license
+              Take a photo of your{"\n"}driver license
             </Text>
           </View>
 
           {!image && (
             <TouchableOpacity
+              // onPress={() => {
+              //   console.log("=-=-=--=>>>>");
+              // }}
               style={styles.selectFileContainer}
-              // onPress={handleSelectFile}
+              onPress={handleSelectFile}
             >
+              {showerr && (
+                <Text style={{ color: "red", fontSize: 10 }}>required</Text>
+              )}
               <Image
-                style={styles.selectFileImage}
+                style={[styles.selectFileImage]}
                 source={require("../../../assets/images/selectfileImage.png")}
               />
             </TouchableOpacity>
@@ -158,8 +213,8 @@ export default function RegisterUploadPhotoScreen({navigation}) {
               onPress={handleSelectFile}
             >
               <Image
-                style={styles.selectFileImageSelected}
-                source={{ uri: image }}
+                style={[styles.selectFileImageSelected]}
+                source={{ uri: image?.uri }}
               />
             </TouchableOpacity>
           )}
@@ -173,23 +228,34 @@ export default function RegisterUploadPhotoScreen({navigation}) {
           <CustomButton
             imageSource={require("../../../assets/icons/Camera.png")}
             text="Open Camera & Take Photo"
-            //   onPress={handleOpenCamera}
+            onPress={handleOpenCamera}
           />
         </ScrollView>
 
         <View style={styles.footerContainer}>
           <View style={styles.nextButtonContainer}>
-            <TouchableOpacity
-           
-            >
+            <TouchableOpacity>
               <Text style={styles.skipText}></Text>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.8} onPress={()=>navigation.navigate('RegisterUploadInsurencePhotoScreen')}>
-              <Image
-                style={styles.nextButton}
-                source={require("../../../assets/icons/nextbutton2.png")}
-              />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                next();
+              }}
+            >
+              {loading ? (
+                <ActivityIndicator
+                  style={styles.nextButton}
+                  size={"large"}
+                  color={"#0C4DA2"}
+                />
+              ) : (
+                <Image
+                  style={styles.nextButton}
+                  source={require("../../../assets/icons/nextbutton2.png")}
+                />
+              )}
             </TouchableOpacity>
           </View>
           <Modal visible={openCamera} animationType="slide" transparent={false}>
@@ -219,7 +285,10 @@ export default function RegisterUploadPhotoScreen({navigation}) {
               </Camera>
             )}
           </Modal>
-          <RegisterSuccessModal isVisible={modalVisible} closeModal={closeModal} />
+          <RegisterSuccessModal
+            isVisible={modalVisible}
+            closeModal={closeModal}
+          />
         </View>
       </KeyboardAvoidingView>
     </ImageBackground>
