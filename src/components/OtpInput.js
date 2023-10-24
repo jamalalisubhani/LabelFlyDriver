@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 
-const OtpInput = () => {
+const OtpInput = ({ code }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRefs = useRef([]);
@@ -21,6 +21,8 @@ const OtpInput = () => {
   };
 
   const handleOtpKeyPress = (index, key) => {
+    code(otp);
+
     if (key === "Backspace" && !otp[index] && index > 0) {
       // Remove the digit from the previous input box
       const newOtp = [...otp];
@@ -33,7 +35,6 @@ const OtpInput = () => {
       setActiveIndex(index - 1);
     }
   };
-
   return (
     <View style={styles.container}>
       {otp.map((digit, index) => (
@@ -42,7 +43,7 @@ const OtpInput = () => {
           ref={(ref) => (inputRefs.current[index] = ref)}
           style={[
             styles.input,
-            index === activeIndex && styles.activeInput // Apply active input styles
+            index === activeIndex && styles.activeInput, // Apply active input styles
           ]}
           maxLength={1}
           keyboardType="default"
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: RFValue(21),
     marginHorizontal: 4,
-    fontFamily: "Bold"
+    fontFamily: "Bold",
   },
   activeInput: {
     borderColor: "#EEEEEE",

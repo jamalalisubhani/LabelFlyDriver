@@ -8,6 +8,10 @@ const ENDPOINTS = {
   INSURANCE: "api/v1/users/upload/insurance",
   REGISTRATION_VEHICLE: "api/v1/users/upload/registration",
   PHOTO: "api/v1/users/upload/photo",
+  FORGOTPASSWORDEMAIL: "api/v1/users/forgotPasswordEmail",
+  FORGOTPASSWORDPHONE: "api/v1/users/forgotPasswordPhone",
+  RESETPASSWORD: "api/v1/users/resetPassword",
+  UPDATEDRIVER: "api/v1/users/update-driver/",
 };
 
 export { BASE_URL, ENDPOINTS };

@@ -16,8 +16,8 @@ const setupAxios = () => {
   HTTP_CLIENT.interceptors.request.use(
     (config) => {
       const user = store.getState().root.user;
-      if (user && user?.authToken && config.headers) {
-        config.headers.Authorization = `Bearer ${user?.authToken}`;
+      if (user && user?.token && config.headers) {
+        config.headers.Authorization = `Bearer ${user?.token}`;
       }
       return config;
     },
@@ -33,14 +33,6 @@ const setupAxios = () => {
     (err) => {
       if (err?.response?.status === 401 || err?.status === 401) {
         let { user } = store.getState().root?.user;
-        if (user) {
-          // doLogoutThings();
-          showToast(
-            "Session expired",
-            "Your session has expired. Please login again to proceed.",
-            false
-          );
-        }
       }
 
       Promise.reject(err);

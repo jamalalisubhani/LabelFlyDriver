@@ -9,26 +9,66 @@ import React, { useState } from "react";
 import HeaderBack from "../../components/HeaderBack";
 import CustomIconInput from "../../components/CustomIconInput";
 import CustomTextInput from "../../components/CustomTextInput";
-import {  RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 import PhoneNumberInput from "../../components/Profile/PhoneNumberInput";
 import Button from "../../components/Button";
+import { useSelector, useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import { accupdate, loginSch } from "../../utils/validation";
+import { updateDriver } from "../../utils/auth.service";
+import { setUser } from "../../redux/reducers/userReducer";
 
 export default function AccountDetailScreen({ navigation }) {
+  const { user } = useSelector((state) => state.root.user);
+  const dispatch = useDispatch();
+  console.log("useruseruseruseruser", user);
   const [fullname, setFullName] = useState("");
   const [email, setEmail] = useState("Youremail@yourdomain.com");
   const handleEmailChange = (text) => {
     setEmail(text);
   };
+
+  const formik = useFormik({
+    validationSchema: accupdate,
+    initialValues: {
+      email: user.data.email ? user.data.email : "",
+      name: user.data.name ? user.data.name : "",
+      phone: user.data.phone ? user.data.phone : "",
+    },
+
+    onSubmit: async (values) => {
+      let params = {
+        email: values.email,
+        name: values.name,
+        password: user.data.password,
+        model: user.data.driver.model,
+        licensePlate: user.data.driver?.license_plate,
+        address: "ABC Karachi",
+      };
+      updateDriver(params, user?.data?._id)
+        .then((res) => {
+          if (res) {
+            let newuser = { ...user, data: res?.data?.data };
+            console.log("KarachiKarachiKarachi>>>>>>>", newuser);
+            dispatch(setUser(newuser));
+
+            navigation.navigate("tabs");
+          }
+        })
+        .catch(() => {})
+        .finally(() => {});
+    },
+  });
   return (
     <View style={styles.container}>
       <HeaderBack title="Account details" />
       <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : RFValue(0)}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : RFValue(0)}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <ScrollView
-          style={{flex:1,}}
+          style={{ flex: 1 }}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
         >
@@ -36,21 +76,32 @@ export default function AccountDetailScreen({ navigation }) {
             <CustomIconInput
               placeholder="Full Name"
               icon={require("../../assets/icons/PlanyourJourney/fullname.png")}
-              value={fullname}
-              onChangeText={setFullName}
+              // value={fullname}
+              // onChangeText={setFullName}
+              onChangeText={formik.handleChange("name")}
+              value={formik.values.name}
             />
 
             <CustomTextInput
-              value={email}
-              onChangeText={handleEmailChange}
+              onChangeText={formik.handleChange("email")}
+              value={formik.values.email}
+              // value={email}
+              // onChangeText={handleEmailChange}
               placeholder="Email"
             />
 
-            <PhoneNumberInput />
+            <PhoneNumberInput
+              change={formik.handleChange("phone")}
+              phoneval={formik.values.phone}
+            />
           </View>
         </ScrollView>
         <View style={styles.footerButtonContainer}>
-          <Button onPress={() => navigation.navigate("tabs")} title="Update" />
+          <Button
+            // onPress={() => navigation.navigate("tabs")}
+            onPress={() => formik.handleSubmit()}
+            title="Update"
+          />
         </View>
       </KeyboardAvoidingView>
     </View>

@@ -18,7 +18,7 @@ const { width } = Dimensions.get("window").width;
 export default function AccountScreen({ navigation }) {
   const { user } = useSelector((state) => state.root.user);
   const dispatch = useDispatch();
-  console.log("useruseruseruseruser", user?.data);
+  console.log("useruseruseruseruser", user.token);
   return (
     <View style={styles.container}>
       <ScrollView

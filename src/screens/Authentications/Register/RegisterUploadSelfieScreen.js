@@ -46,7 +46,7 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
   const dispatch = useDispatch();
   const openModal = async () => {
     setloading(true);
-    if (registerdata == "") {
+    if (registerdata.photo == "") {
       handleOpenCamera();
 
       setloading(false);
@@ -55,8 +55,10 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
     }
   };
   const register = async (val) => {
-    let prams = { ...val };
-    await registerUser(prams)
+    let prams = { ...registerdata };
+    console.log("valvalval>>>--000-registerdataregisterdata-", registerdata);
+
+    await registerUser(registerdata)
       .then((val) => {
         console.log("valvalval>>>--000--", val.data);
         dispatch(setUser(val.data));

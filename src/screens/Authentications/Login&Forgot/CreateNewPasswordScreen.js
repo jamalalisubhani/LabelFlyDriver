@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import HeaderBack from "../../../components/HeaderBack";
@@ -14,10 +15,14 @@ import { RFValue } from "react-native-responsive-fontsize";
 import CustomTextInput from "../../../components/CustomTextInput";
 import RememberMeCheckbox from "../../../components/RememberMeCheckbox";
 import Button from "../../../components/Button";
+import { useFormik } from "formik";
+import { regStep3, regStep3A } from "../../../utils/validation";
+import { resetPassword } from "../../../utils/auth.service";
 
 const { width, height } = Dimensions.get("window");
 
-export default function CreateNewPasswordScreen({ navigation }) {
+export default function CreateNewPasswordScreen({ navigation, route }) {
+  console.log("routerouterouteroute", route?.params?.code);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -28,6 +33,38 @@ export default function CreateNewPasswordScreen({ navigation }) {
   const handleConfirmPasswordChange = (text) => {
     setConfirmPassword(text);
   };
+
+  const formik = useFormik({
+    validationSchema: regStep3A,
+    initialValues: {
+      password: "",
+      confirmpassword: "",
+      code: route?.params?.code,
+    },
+    onSubmit: async (values) => {
+      let params = {
+        code: values.code,
+        password: values.password,
+        passwordConfirm: values.confirmpassword,
+      };
+      resetPassword(params)
+        .then((res) => {
+          if (res) {
+            navigation.navigate("LoginScreen");
+          } else {
+            Alert.alert("Error", "incorrect code", [
+              { text: "OK", onPress: () => navigation.navigate("LoginScreen") },
+            ]);
+          }
+        })
+        .catch((e) => {
+          // console.log("errrrrrr>>>>>>>>", e);
+        })
+        .finally(() => {});
+
+      // console.log("lhkhkjh>>>", values);
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -56,15 +93,32 @@ export default function CreateNewPasswordScreen({ navigation }) {
             </Text>
 
             <View style={styles.inputsContainer}>
+              <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+                {formik.errors.password && (
+                  <Text style={{ color: "red", fontSize: 10 }}>
+                    {formik.errors.password}
+                  </Text>
+                )}
+              </View>
               <CustomTextInput
-                value={password}
-                onChangeText={handlePasswordChange}
+                onChangeText={formik.handleChange("password")}
+                value={formik.values.password}
                 placeholder="Password"
                 secureTextEntry
               />
+              <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+                {formik.errors.confirmpassword && (
+                  <Text style={{ color: "red", fontSize: 10 }}>
+                    {formik.errors.confirmpassword}
+                  </Text>
+                )}
+              </View>
+
               <CustomTextInput
-                value={confirmPassword}
-                onChangeText={handleConfirmPasswordChange}
+                onChangeText={formik.handleChange("confirmpassword")}
+                value={formik.values.confirmpassword}
+                // value={confirmPassword}
+                // onChangeText={handleConfirmPasswordChange}
                 placeholder="Confirm Password"
                 secureTextEntry
               />
@@ -79,7 +133,8 @@ export default function CreateNewPasswordScreen({ navigation }) {
 
         <View style={styles.footerButtonContainer}>
           <Button
-            onPress={() => navigation.navigate("LoginScreen")}
+            // onPress={() => navigation.navigate("LoginScreen")}
+            onPress={formik.handleSubmit}
             title="Continue"
           />
         </View>

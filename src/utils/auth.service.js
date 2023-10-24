@@ -16,6 +16,19 @@ export const registerUser = async (params) => {
 export const loginApi = async (params) => {
   return await HTTP_CLIENT.post(ENDPOINTS.LOGIN, params);
 };
+export const forgotPasswordEmail = async (params) => {
+  return await HTTP_CLIENT.post(ENDPOINTS.FORGOTPASSWORDEMAIL, params);
+};
+export const forgotPasswordPhone = async (params) => {
+  return await HTTP_CLIENT.post(ENDPOINTS.FORGOTPASSWORDPHONE, params);
+};
+
+export const resetPassword = async (params) => {
+  return await HTTP_CLIENT.patch(ENDPOINTS.RESETPASSWORD, params);
+};
+export const updateDriver = async (params, id) => {
+  return await HTTP_CLIENT.patch(`${ENDPOINTS.UPDATEDRIVER}${id}`, params);
+};
 
 export const driverLicense = async (image) => {
   const formData = new FormData();
