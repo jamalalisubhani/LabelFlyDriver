@@ -22,6 +22,8 @@ const setupAxios = () => {
       return config;
     },
     (err) => {
+      console.log("errerrerrerr  ininini ", err);
+
       Promise.reject(err);
     }
   );
@@ -31,10 +33,12 @@ const setupAxios = () => {
       return sucs;
     },
     (err) => {
-      if (err?.response?.status === 401 || err?.status === 401) {
-        let { user } = store.getState().root?.user;
-      }
+      console.log("errerrerrerr  ininini ", err);
 
+      if (err?.response?.status === 401 || err?.status === 401) {
+        let { user } = store.getState().root?.user?.user;
+      }
+      console.log("errerrerrerr  ininini ", err);
       Promise.reject(err);
     }
   );

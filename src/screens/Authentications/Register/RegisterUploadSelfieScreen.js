@@ -23,12 +23,15 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setRegisterData } from "../../../redux/reducers/generalDataReducer";
 import { setUser } from "../../../redux/reducers/userReducer";
+import * as Location from "expo-location";
 
 const { width } = Dimensions.get("window");
 
 export default function RegisterUploadSelfieScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [location, setLocation] = useState(null);
+
   const [cameraPermission, setCameraPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
@@ -54,11 +57,48 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
       register(registerdata);
     }
   };
-  const register = async (val) => {
-    let prams = { ...registerdata };
-    console.log("valvalval>>>--000-registerdataregisterdata-", registerdata);
 
-    await registerUser(registerdata)
+  const handleGetCurrentLocation = async () => {
+    // use()
+    // requestPermission()
+    let { status, requestPermission } =
+      await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      return;
+    }
+
+    await Location.getCurrentPositionAsync({
+      accuracy:
+        Platform.OS == "android"
+          ? Location.Accuracy.Low
+          : Location.Accuracy.Lowest,
+    })
+      .then(async (location) => {
+        setLocation({
+          latitude: parseFloat(location?.coords?.latitude),
+          longitude: parseFloat(location?.coords?.longitude),
+        });
+      })
+      .catch((e) => {});
+  };
+  useEffect(() => {
+    handleGetCurrentLocation();
+  }, []);
+  console.log("locationlocationlocationlocation", location?.latitude);
+  console.log("locationlocationlocationlocation", location?.longitude);
+  console.log("locationlocationlocationlocation", {
+    coordinates: [location?.latitude, location?.longitude],
+  });
+  const register = async (val) => {
+    let prams = {
+      ...registerdata,
+      location: {
+        coordinates: [location?.latitude, location?.longitude],
+      },
+    };
+    console.log("valvalval>>>--000-registerdataregisterdata-", prams);
+
+    await registerUser(prams)
       .then((val) => {
         console.log("valvalval>>>--000--", val.data);
         dispatch(setUser(val.data));
@@ -133,6 +173,8 @@ export default function RegisterUploadSelfieScreen({ navigation }) {
         : Camera.Constants.Type.back
     );
   };
+  // console.log("locationlocationlocationlocation", location?.latitude);
+  // console.log("locationlocationlocationlocation", location?.longitude);
   const CustomButton = ({ imageSource, text, onPress }) => {
     return (
       <TouchableOpacity

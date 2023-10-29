@@ -12,6 +12,7 @@ const ENDPOINTS = {
   FORGOTPASSWORDPHONE: "api/v1/users/forgotPasswordPhone",
   RESETPASSWORD: "api/v1/users/resetPassword",
   UPDATEDRIVER: "api/v1/users/update-driver/",
+  UPDATEDRIVERFIELD: "api/v1/users/add-driver-fields/",
 };
 
 export { BASE_URL, ENDPOINTS };
