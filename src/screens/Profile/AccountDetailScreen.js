@@ -41,9 +41,7 @@ export default function AccountDetailScreen({ navigation }) {
         email: values.email,
         name: values.name,
         password: user.data.password,
-        model: user.data.driver.model,
-        licensePlate: user.data.driver?.license_plate,
-        address: "ABC Karachi",
+        phone: user.data.phone,
       };
       updateDriver(params, user?.data?._id)
         .then((res) => {

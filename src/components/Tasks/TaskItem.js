@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { Image } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { TouchableOpacity } from "react-native";
-
+import {
+  Status,
+  getAddressFromLocation,
+} from "../../utils/Shared/Functions.js";
+import { getPackageBy_ID } from "../../utils/auth.service.js";
 const WIDTH = Dimensions.get("window").width;
 
-export default function TaskItem({ status }) {
+export default function TaskItem({ item }) {
+  const [dropAddress, setDropAdress] = useState("");
+  const [pickAddress, setPickAdress] = useState("");
+  const [packagename, setpackagename] = useState("");
+
+  // console.log("itemitemitem", item?.day);
   const getStatusColor = () => {
     switch (status) {
       case "active":
@@ -32,6 +41,44 @@ export default function TaskItem({ status }) {
         return "";
     }
   };
+  useEffect(() => {
+    Calculations();
+  }, []);
+
+  const Calculations = () => {
+    getPackageBy_ID(item?.packageId).then((res) => {
+      console.log(
+        "packageIdpackageIdpackageIdpackageId>>",
+        res?.data?.data?.packages
+      );
+      if (res?.data?.data) {
+        setpackagename(res?.data?.data?.packages);
+      }
+    });
+
+    getAddressFromLocation(
+      item?.dropoffLocation?.coordinates[0],
+      item?.dropoffLocation?.coordinates[1]
+    ).then((address) => {
+      // console.log("--------   dropoffLocation  ------->", address);
+      setDropAdress(
+        `${!!address[0]?.name ? address[0]?.name : ""}, ${
+          !!address[0]?.country ? address[0]?.country : ""
+        }`
+      );
+    });
+    getAddressFromLocation(
+      item?.pickupLocation?.coordinates[0],
+      item?.pickupLocation?.coordinates[1]
+    ).then((address) => {
+      console.log("--------   pickupLocation   ------->", address);
+      setPickAdress(
+        `${!!address[0]?.name ? address[0]?.name : ""}, ${
+          !!address[0]?.country ? address[0]?.country : ""
+        }`
+      );
+    });
+  };
 
   return (
     <View style={styles.itemcontainer}>
@@ -41,25 +88,34 @@ export default function TaskItem({ status }) {
       />
 
       <View>
-        <Text style={styles.title}>From A to Z</Text>
+        <View style={{ width: "90%" }}>
+          <Text style={styles.title}>
+            <Text style={{ color: "red" }}>From</Text> {pickAddress}
+            {" \n"}
+            <Text style={{ color: "red" }}>To</Text> {dropAddress}
+          </Text>
+        </View>
 
         <View
           style={{ flexDirection: "row", alignItems: "center", marginTop: 12 }}
         >
           <View
-            style={[styles.indicator, { backgroundColor: getStatusColor() }]}
+            // style={[styles.indicator, { backgroundColor: getStatusColor() }]}
+            style={[styles.indicator, { backgroundColor: "gray" }]}
           />
-          <Text style={[styles.statusText, { color: getStatusColor() }]}>
-            {getStatusText()}
+          {/* <Text style={[styles.statusText, { color: getStatusColor() }]}> */}
+          <Text style={[styles.statusText, { color: "black" }]}>
+            {Status[item?.status]}
+            {/* {getStatusText()} */}
           </Text>
         </View>
         <View style={styles.deliveryTageContainer}>
           <TouchableOpacity style={styles.tagContainer}>
-            <Text style={styles.tagText}>Delivery</Text>
+            <Text style={styles.tagText}>{item?.day}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.tagContainer}>
-            <Text style={styles.tagText}>Small package</Text>
+            <Text style={styles.tagText}>{packagename} package</Text>
           </TouchableOpacity>
         </View>
 

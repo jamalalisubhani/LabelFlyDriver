@@ -117,14 +117,14 @@ export default function MyDocumentsScreen({ navigation }) {
       };
     }
     let copyuser = Object.assign({ ...user });
-    let o = {
-      ...copyuser,
-      data: {
-        ...copyuser?.data,
-        driver: params?.driver,
-      },
-    };
-    console.log("----  USER---", o?.data);
+    // let o = {
+    //   ...copyuser,
+    //   data: {
+    //     ...copyuser?.data,
+    //     driver: params?.driver,
+    //   },
+    // };
+    console.log("----  USER---", params);
 
     updateDriverField(params, user?.data?._id)
       .then((res) => {
@@ -143,7 +143,7 @@ export default function MyDocumentsScreen({ navigation }) {
   //   "\n",
   //   drivelicence
   // );
-  console.log("uuuuu --", user?.data.driver);
+  // console.log("uuuuu --", user?.data.driver);
 
   return (
     <View style={styles.container}>

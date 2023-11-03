@@ -1,13 +1,57 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { Image } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { TouchableOpacity } from "react-native";
+import { Delivery, getAddressFromLocation } from "../utils/Shared/Functions";
+import { getPackageBy_ID } from "../utils/auth.service";
 
 const WIDTH = Dimensions.get("window").width;
 
-export default function HomeTaskItem() {
+export default function HomeTaskItem({ item }) {
+  const [dropAddress, setDropAdress] = useState("");
+  const [pickAddress, setPickAdress] = useState("");
+  const [packagename, setpackagename] = useState("");
+
+  useEffect(() => {
+    Calculations();
+  }, []);
+  const Calculations = () => {
+    getPackageBy_ID(item?.packageId).then((res) => {
+      console.log(
+        "packageIdpackageIdpackageIdpackageId>>",
+        res?.data?.data?.packages
+      );
+      if (res?.data?.data) {
+        setpackagename(res?.data?.data?.packages);
+      }
+    });
+
+    getAddressFromLocation(
+      item?.dropoffLocation?.coordinates[0],
+      item?.dropoffLocation?.coordinates[1]
+    ).then((address) => {
+      // console.log("--------   dropoffLocation  ------->", address);
+      setDropAdress(
+        `${!!address[0]?.name ? address[0]?.name : ""}, ${
+          !!address[0]?.country ? address[0]?.country : ""
+        }`
+      );
+    });
+    getAddressFromLocation(
+      item?.pickupLocation?.coordinates[0],
+      item?.pickupLocation?.coordinates[1]
+    ).then((address) => {
+      // console.log("--------   pickupLocation   ------->", address);
+      setPickAdress(
+        `${!!address[0]?.name ? address[0]?.name : ""}, ${
+          !!address[0]?.country ? address[0]?.country : ""
+        }`
+      );
+    });
+  };
+
   return (
     <View style={styles.itemcontainer}>
       <Image
@@ -16,15 +60,22 @@ export default function HomeTaskItem() {
       />
 
       <View>
-        <Text style={styles.title}>From A to Z</Text>
+        <View style={{ width: "85%" }}>
+          <Text style={styles.title}>
+            <Text style={{ color: "red" }}>From</Text> {pickAddress}
+            {" \n"}
+            <Text style={{ color: "red" }}>To</Text> {dropAddress}
+          </Text>
+        </View>
 
         <View style={styles.deliveryTageContainer}>
           <TouchableOpacity style={styles.tagContainer}>
-            <Text style={styles.tagText}>Delivery</Text>
+            <Text style={styles.tagText}>{Delivery[item?.day]}</Text>
+            {/* <Text style={styles.tagText}>Delivery</Text> */}
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.tagContainer}>
-            <Text style={styles.tagText}>Small package</Text>
+            <Text style={styles.tagText}>{packagename} package</Text>
           </TouchableOpacity>
         </View>
 
@@ -45,8 +96,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
-    position: "absolute",
-    bottom: 30,
+    // position: "absolute",
+    // bottom: 30,
+    marginHorizontal: 15,
+    // mar,
   },
   truckImage: {
     width: 73,

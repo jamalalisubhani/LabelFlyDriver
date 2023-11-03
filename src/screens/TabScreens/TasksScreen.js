@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import SearchTasks from "../../components/Tasks/SearchTasks";
@@ -8,28 +8,36 @@ import TaskItem from "../../components/Tasks/TaskItem";
 
 import FilterBottomSheet from "../../components/Tasks/FilterBottomSheet";
 import BottomSheetModal from "../../components/Tasks/BottomSheetModal";
+import { getMyBookings } from "../../utils/auth.service";
+import { useSelector } from "react-redux";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const TasksScreen = () => {
   const [selectedButton, setSelectedButton] = useState("all");
   const [search, setSearch] = useState("");
+  const [resp, setResp] = useState([]);
+  const [data, setdata] = useState([]);
+  const focus = useIsFocused();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
+  const { user } = useSelector((state) => state.root.user);
   const handleButtonPress = (value) => {
     setSelectedButton(value);
   };
-
+  // console.log("useruseruseruseruseruseruseruseruseruser>>", user.token);
   const buttons = [
     { value: "all", label: "All" },
     { value: "completed", label: "Completed" },
-    { value: "active", label: "Active" },
+    { value: "in-progress", label: "Active" },
     { value: "canceled", label: "Canceled" },
+    { value: "accepted", label: "Accepted" },
+    { value: "requested", label: "Requested" },
   ];
 
-  const data = [
-    { id: "1", status: "active" },
-    { id: "2", status: "completed" },
-    { id: "3", status: "cancelled" },
-  ];
+  // const data = [
+  //   { id: "1", status: "active" },
+  //   { id: "2", status: "completed" },
+  //   { id: "3", status: "cancelled" },
+  // ];
 
   const openBottomSheet = () => {
     setBottomSheetVisible(true);
@@ -37,6 +45,20 @@ const TasksScreen = () => {
 
   const closeBottomSheet = () => {
     setBottomSheetVisible(false);
+  };
+  useEffect(() => {
+    getBookingApi("");
+  }, [focus]);
+
+  const getBookingApi = (status) => {
+    getMyBookings(status == "" ? "" : `status=${status}`)
+      .then((res) => {
+        console.log("hkhkhkjhhjhSelectedValuesk>>>>>>", res?.data?.data);
+        setdata(res?.data?.data);
+      })
+      .catch((e) => {
+        console.log("heeeeeereeekhkhkjhhSelectedValuesjhk>>>>>>", e);
+      });
   };
 
   return (
@@ -60,7 +82,12 @@ const TasksScreen = () => {
       <FilterSelectableButtons
         buttons={buttons}
         selectedButton={selectedButton}
-        handleButtonPress={handleButtonPress}
+        handleButtonPress={(v) => {
+          getBookingApi(`${v}`);
+
+          console.log("handleButtonPresshandleButtonPress", v);
+          handleButtonPress(v);
+        }}
       />
 
       <ScrollView
@@ -71,12 +98,26 @@ const TasksScreen = () => {
           contentContainerStyle={{ marginTop: 25 }}
           data={data}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TaskItem status={item.status} />}
+          renderItem={({ item }) => <TaskItem item={item} />}
         />
       </ScrollView>
 
       <BottomSheetModal visible={bottomSheetVisible} onClose={closeBottomSheet}>
-        <FilterBottomSheet onClose={closeBottomSheet} />
+        <FilterBottomSheet
+          SelectedValues={(re) => {
+            console.log(re.status);
+            getBookingApi(`${re.status}`);
+
+            // getMyBookings(`status=${re.status}`)
+            //   .then((res) => {
+            //     console.log("hkhkhkjhhjhSelectedValuesk>>>>>>", res?.data);
+            //   })
+            //   .catch((e) => {
+            //     console.log("heeeeeereeekhkhkjhhSelectedValuesjhk>>>>>>", e);
+            //   });
+          }}
+          onClose={closeBottomSheet}
+        />
       </BottomSheetModal>
     </View>
   );

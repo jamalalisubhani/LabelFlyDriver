@@ -8,17 +8,31 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RFValue } from "react-native-responsive-fontsize";
 import ProfileItem from "../../components/Profile/ProfileItem";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/reducers/userReducer";
+import { myRatingsApi } from "../../utils/auth.service";
 const { width } = Dimensions.get("window").width;
 
 export default function AccountScreen({ navigation }) {
   const { user } = useSelector((state) => state.root.user);
   const dispatch = useDispatch();
+  const [rating, setRating] = useState({ averageRating: 0, totalReviews: 0 });
   console.log("useruseruseruseruser", user.token);
+  useEffect(() => {
+    myRatingsApi()
+      .then((res) => {
+        console.log("resresresresres   res", res?.data?.data);
+        if (res?.data?.data) {
+          setRating(res?.data?.data);
+        }
+      })
+      .catch((err) => {
+        console.log("errerrerrerrerrerr", err);
+      });
+  }, []);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -54,7 +68,9 @@ export default function AccountScreen({ navigation }) {
               source={require("../../assets/icons/Profile/halfstar.png")}
             />
 
-            <Text style={styles.ratingsText}>4.8 (86 reviews)</Text>
+            <Text style={styles.ratingsText}>
+              {rating.averageRating} ({rating?.totalReviews} reviews)
+            </Text>
           </View>
         </View>
 

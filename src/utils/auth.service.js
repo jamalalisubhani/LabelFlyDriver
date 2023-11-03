@@ -91,3 +91,18 @@ export const photoApi = async (image) => {
 export const post = (email) => {
   return HTTP_CLIENT.get(``);
 };
+export const getMyBookings = (url) => {
+  console.log("urlurlurl>>>", url);
+  return HTTP_CLIENT.get(
+    `${ENDPOINTS.GETMYBOOKINGS}${url == "" ? "" : "?"}${url}`
+  );
+};
+export const getBookingRequests = () => {
+  return HTTP_CLIENT.get(ENDPOINTS.GETBOOKINGREQUESTS);
+};
+export const myRatingsApi = () => {
+  return HTTP_CLIENT.get(ENDPOINTS.MY_RATING);
+};
+export const getPackageBy_ID = (id) => {
+  return HTTP_CLIENT.get(`${ENDPOINTS.GET_PACKAGE_BY_ID}${id}`);
+};

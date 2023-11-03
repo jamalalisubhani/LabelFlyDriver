@@ -6,6 +6,6 @@ import Auth from "./Auth";
 
 export default function Routes() {
   const { user } = useSelector((state) => state.root.user);
-  console.log("useSelectoruseSelector", user);
+  // console.log("useSelectoruseSelector", user);
   return <View style={{ flex: 1 }}>{user ? <Navigation /> : <Auth />}</View>;
 }

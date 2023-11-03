@@ -15,7 +15,9 @@ const initialConfig = () => {
 const setupAxios = () => {
   HTTP_CLIENT.interceptors.request.use(
     (config) => {
-      const user = store.getState().root.user;
+      const user = store.getState().root.user.user;
+      // console.log("errerrerrerruser?.tokenuser?.token  ininini ", user?.token);
+
       if (user && user?.token && config.headers) {
         config.headers.Authorization = `Bearer ${user?.token}`;
       }

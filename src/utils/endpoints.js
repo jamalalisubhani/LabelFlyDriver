@@ -11,8 +11,12 @@ const ENDPOINTS = {
   FORGOTPASSWORDEMAIL: "api/v1/users/forgotPasswordEmail",
   FORGOTPASSWORDPHONE: "api/v1/users/forgotPasswordPhone",
   RESETPASSWORD: "api/v1/users/resetPassword",
-  UPDATEDRIVER: "api/v1/users/update-driver/",
-  UPDATEDRIVERFIELD: "api/v1/users/add-driver-fields/",
+  UPDATEDRIVER: "api/v1/users/update_driver/",
+  UPDATEDRIVERFIELD: "api/v1/users/add_driver_fields/",
+  GETMYBOOKINGS: "/api/v1/bookings/driver_booking_list",
+  GETBOOKINGREQUESTS: "api/v1/bookings/driver/requests",
+  MY_RATING: "api/v1/reviews/driver/my_ratings",
+  GET_PACKAGE_BY_ID: "api/v1/packages/",
 };
 
 export { BASE_URL, ENDPOINTS };

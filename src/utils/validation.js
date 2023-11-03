@@ -33,3 +33,7 @@ export const accupdate = Yup.object().shape({
   name: Yup.string().required("Required"),
   phone: Yup.string().required("Required"),
 });
+export const vehicleinfo = Yup.object().shape({
+  model: Yup.string().required("Required"),
+  licensePlate: Yup.string().required("Required"),
+});

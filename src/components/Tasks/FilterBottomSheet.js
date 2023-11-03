@@ -40,8 +40,10 @@ const FilterBottomSheet = (props) => {
   const buttons = [
     { value: "all", label: "All" },
     { value: "completed", label: "Completed" },
-    { value: "active", label: "Active" },
+    { value: "in-progress", label: "Active" },
     { value: "canceled", label: "Canceled" },
+    { value: "accepted", label: "Accepted" },
+    { value: "requested", label: "Requested" },
   ];
   const buttonsDate = [
     { value: "all", label: "All" },
@@ -164,7 +166,17 @@ const FilterBottomSheet = (props) => {
           <Text style={{ ...styles.btnText, color: "#35383F" }}>Reset</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={props.onClose} style={styles.footerButton}>
+        <TouchableOpacity
+          onPress={() => {
+            props.SelectedValues({
+              status: selectedButtonStatus,
+              // date: selectedButtonDate,
+              // type: selectedButtonType,
+            });
+            props.onClose();
+          }}
+          style={styles.footerButton}
+        >
           <Text style={styles.btnText}>Apply</Text>
         </TouchableOpacity>
       </View>

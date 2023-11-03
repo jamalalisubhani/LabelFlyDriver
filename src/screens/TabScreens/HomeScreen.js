@@ -7,8 +7,9 @@ import {
   ScrollView,
   TextInput,
   Switch,
+  FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { RFValue } from "react-native-responsive-fontsize";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
@@ -17,13 +18,26 @@ import { Feather } from "@expo/vector-icons";
 import { Image } from "react-native";
 import HomeTaskItem from "../../components/HomeTaskItem";
 import { useSelector } from "react-redux";
+import { getBookingRequests } from "../../utils/auth.service";
 
 export default function HomeScreen() {
   // const { user } = useSelector((state) => state.root.user);
   // console.log("useruseruseruser", user?.data?.data);
   const navigation = useNavigation();
   const [search, setSearch] = React.useState(true);
+  const [data, setdata] = React.useState([]);
   const [switcha, setSwictha] = React.useState(true);
+  useEffect(() => {
+    getBookingRequests()
+      .then((res) => {
+        console.log("HOME ------->>>> Request   ----", res?.data?.data);
+        setdata(res?.data?.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+  const WIDTH = Dimensions.get("window").width;
 
   return (
     <View style={styles.container}>
@@ -66,8 +80,26 @@ export default function HomeScreen() {
         style={styles.graphCircle}
         source={require("../../assets/icons/driverloadinghome.png")}
       />
-
-      <HomeTaskItem />
+      <View style={{ flex: 1 }}>
+        <FlatList
+          contentContainerStyle={{
+            zIndex: 9999,
+            position: "absolute",
+            // height: 200,
+            // backgroundColor: "red",
+            width: WIDTH,
+            bottom: 10,
+          }}
+          // bounces={false}
+          scrollEnabled={true}
+          nestedScrollEnabled
+          horizontal
+          data={data}
+          renderItem={({ item }) => {
+            return <HomeTaskItem item={item} />;
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -99,8 +131,8 @@ const styles = StyleSheet.create({
   },
   graphCircle: {
     width: RFValue(310),
-    height: RFValue(310),
-    marginTop: 45,
+    height: RFValue(220),
+    marginTop: 15,
     resizeMode: "contain",
     marginRight: 20,
     alignSelf: "center",
