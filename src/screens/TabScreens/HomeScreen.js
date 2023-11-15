@@ -31,7 +31,9 @@ export default function HomeScreen() {
     getBookingRequests()
       .then((res) => {
         console.log("HOME ------->>>> Request   ----", res?.data?.data);
-        setdata(res?.data?.data);
+        if (res?.data?.data) {
+          setdata(res?.data?.data);
+        }
       })
       .catch((e) => {
         console.log(e);

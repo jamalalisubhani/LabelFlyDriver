@@ -5,7 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/TabScreens/HomeScreen";
 import AccountScreen from "../screens/TabScreens/AccountScreen";
 import TasksScreen from "../screens/TabScreens/TasksScreen";
-import EarningScreen from "../screens/TabScreens/EarningScreen";
+// import EarningScreen from "../screens/TabScreens/EarningScreen";
+import ChatComponentWithSocket from "../screens/TabScreens/EarningScreen";
 
 const WIDTH = Dimensions.get("window").width;
 const Tab = createBottomTabNavigator();
@@ -202,7 +203,7 @@ export default function Tabs() {
     >
       <Tab.Screen name="home" component={HomeScreen} />
       <Tab.Screen name="tasks" component={TasksScreen} />
-      <Tab.Screen name="earnings" component={EarningScreen} />
+      <Tab.Screen name="earnings" component={ChatComponentWithSocket} />
       <Tab.Screen name="account" component={AccountScreen} />
     </Tab.Navigator>
   );

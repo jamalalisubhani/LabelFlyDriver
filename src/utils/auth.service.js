@@ -106,3 +106,9 @@ export const myRatingsApi = () => {
 export const getPackageBy_ID = (id) => {
   return HTTP_CLIENT.get(`${ENDPOINTS.GET_PACKAGE_BY_ID}${id}`);
 };
+export const GetMessage = async (id) => {
+  return await HTTP_CLIENT.get(`${ENDPOINTS.GETMESSAGE}${id}`);
+};
+export const SendMessage = async (params) => {
+  return await HTTP_CLIENT.post(ENDPOINTS.SENDMESSAGE, params);
+};

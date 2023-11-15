@@ -10,6 +10,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./src/redux/store";
 import { initialConfig } from "./src/utils/config";
+import { SocketContext } from "./src/utils/SocketProvider";
+import { io } from "socket.io-client";
 
 export default function App() {
   const [isReady, setIsReady] = React.useState(false);
@@ -39,6 +41,7 @@ export default function App() {
   }
 
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 0 : 0;
+  const socket = io("http://192.168.18.232:8000/");
 
   return (
     <Provider store={store}>
@@ -51,8 +54,9 @@ export default function App() {
               barStyle="dark-content"
             />
           </View>
-
-          <Routes />
+          <SocketContext.Provider value={socket}>
+            <Routes />
+          </SocketContext.Provider>
         </View>
       </PersistGate>
     </Provider>

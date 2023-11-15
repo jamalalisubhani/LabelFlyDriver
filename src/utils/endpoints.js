@@ -17,6 +17,8 @@ const ENDPOINTS = {
   GETBOOKINGREQUESTS: "api/v1/bookings/driver/requests",
   MY_RATING: "api/v1/reviews/driver/my_ratings",
   GET_PACKAGE_BY_ID: "api/v1/packages/",
+  GETMESSAGE: "api/v1/message/",
+  SENDMESSAGE: "api/v1/message",
 };
 
 export { BASE_URL, ENDPOINTS };
