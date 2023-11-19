@@ -1,4 +1,5 @@
 import * as Location from "expo-location";
+import { Platform } from "react-native";
 
 export const getAddressFromLocation = async (latitude, longitude) => {
   try {
@@ -10,6 +11,31 @@ export const getAddressFromLocation = async (latitude, longitude) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getLocation = async () => {
+  await Location.requestForegroundPermissionsAsync();
+  let res = null;
+  let x = await Location.getCurrentPositionAsync({
+    accuracy:
+      Platform.OS == "android"
+        ? Location.Accuracy.Low
+        : Location.Accuracy.Lowest,
+  })
+    .then(async (location) => {
+      // console.log("locationlocation", location);
+      res = {
+        latitude: parseFloat(location?.coords?.latitude),
+        longitude: parseFloat(location?.coords?.longitude),
+      };
+    })
+    .catch((e) => {
+      // console.log("locationlocationeee", e);
+
+      res = null;
+    });
+  // console.log("first--", res);
+  return res;
 };
 export const Status = {
   accepted: "Accepted",

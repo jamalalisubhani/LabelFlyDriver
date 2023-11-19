@@ -12,10 +12,10 @@ import { getMyBookings } from "../../utils/auth.service";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
-const TasksScreen = () => {
+const TasksScreen = ({ navigation }) => {
   const [selectedButton, setSelectedButton] = useState("all");
   const [search, setSearch] = useState("");
-  const [resp, setResp] = useState([]);
+  const [refresh, setrefresh] = useState(false);
   const [data, setdata] = useState([]);
   const focus = useIsFocused();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
@@ -48,7 +48,7 @@ const TasksScreen = () => {
   };
   useEffect(() => {
     getBookingApi("");
-  }, [focus]);
+  }, [focus, refresh]);
 
   const getBookingApi = (status) => {
     getMyBookings(status == "" ? "" : `status=${status}`)
@@ -98,7 +98,16 @@ const TasksScreen = () => {
           contentContainerStyle={{ marginTop: 25 }}
           data={data}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TaskItem item={item} />}
+          renderItem={({ item }) => (
+            <TaskItem
+              refreshfunc={() => {
+                console.log("freshing...");
+                navigation.navigate("home");
+                // setrefresh(!refresh);
+              }}
+              item={item}
+            />
+          )}
         />
       </ScrollView>
 

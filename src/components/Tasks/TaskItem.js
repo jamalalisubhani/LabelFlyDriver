@@ -6,15 +6,18 @@ import { TouchableOpacity } from "react-native";
 import {
   Status,
   getAddressFromLocation,
+  getLocation,
 } from "../../utils/Shared/Functions.js";
-import { getPackageBy_ID } from "../../utils/auth.service.js";
+import { AcceptMyBookings, getPackageBy_ID } from "../../utils/auth.service.js";
+import { useNavigation } from "@react-navigation/native";
 const WIDTH = Dimensions.get("window").width;
 
-export default function TaskItem({ item }) {
+export default function TaskItem({ item, refreshfunc }) {
   const [dropAddress, setDropAdress] = useState("");
   const [pickAddress, setPickAdress] = useState("");
   const [packagename, setpackagename] = useState("");
-
+  const [refresh, setrefresh] = useState(false);
+  const navigation = useNavigation();
   // console.log("itemitemitem", item?.day);
   const getStatusColor = () => {
     switch (status) {
@@ -47,10 +50,10 @@ export default function TaskItem({ item }) {
 
   const Calculations = () => {
     getPackageBy_ID(item?.packageId).then((res) => {
-      console.log(
-        "packageIdpackageIdpackageIdpackageId>>",
-        res?.data?.data?.packages
-      );
+      // console.log(
+      //   "packageIdpackageIdpackageIdpackageId>>",
+      //   res?.data?.data?.packages
+      // );
       if (res?.data?.data) {
         setpackagename(res?.data?.data?.packages);
       }
@@ -118,10 +121,32 @@ export default function TaskItem({ item }) {
             <Text style={styles.tagText}>{packagename} package</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.seeDetailButton}>
-          <Text style={styles.seeDetailText}>See Details</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity style={styles.seeDetailButton}>
+            <Text style={styles.seeDetailText}>See Details</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={async () => {
+              let latlog = await getLocation();
+              console.log("getLocationgetLocation", item?._id, latlog);
+              AcceptMyBookings(item?._id, latlog)
+                .then((res) => {
+                  console.log("resresresres--->", res?.data?.status);
+                  if (res?.data?.status) {
+                    setrefresh(!refresh);
+                    if (refreshfunc) refreshfunc();
+                  }
+                })
+                .catch((err) => {
+                  console.log("resresresres--->", err);
+                })
+                .finally(() => {});
+            }}
+            style={[styles.seeDetailButton, { marginHorizontal: 5 }]}
+          >
+            <Text style={styles.seeDetailText}>Accept</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

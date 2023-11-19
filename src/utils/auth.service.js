@@ -92,10 +92,14 @@ export const post = (email) => {
   return HTTP_CLIENT.get(``);
 };
 export const getMyBookings = (url) => {
-  console.log("urlurlurl>>>", url);
+  // console.log("urlurlurl>>>", url);
   return HTTP_CLIENT.get(
     `${ENDPOINTS.GETMYBOOKINGS}${url == "" ? "" : "?"}${url}`
   );
+};
+export const AcceptMyBookings = (id, params) => {
+  // console.log("urlurlurl>>>", url);
+  return HTTP_CLIENT.put(`${ENDPOINTS.ACCEPTMYBOOKINGS}${id}`, params);
 };
 export const getBookingRequests = () => {
   return HTTP_CLIENT.get(ENDPOINTS.GETBOOKINGREQUESTS);

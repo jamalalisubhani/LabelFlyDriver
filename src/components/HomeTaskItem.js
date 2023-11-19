@@ -19,10 +19,10 @@ export default function HomeTaskItem({ item }) {
   }, []);
   const Calculations = () => {
     getPackageBy_ID(item?.packageId).then((res) => {
-      console.log(
-        "packageIdpackageIdpackageIdpackageId>>",
-        res?.data?.data?.packages
-      );
+      // console.log(
+      //   "packageIdpackageIdpackageIdpackageId>>",
+      //   res?.data?.data?.packages
+      // );
       if (res?.data?.data) {
         setpackagename(res?.data?.data?.packages);
       }
