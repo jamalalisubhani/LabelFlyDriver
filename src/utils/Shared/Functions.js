@@ -14,6 +14,8 @@ export const getAddressFromLocation = async (latitude, longitude) => {
 };
 
 export const getLocation = async () => {
+  console.log("getLocation--->");
+
   await Location.requestForegroundPermissionsAsync();
   let res = null;
   let x = await Location.getCurrentPositionAsync({

@@ -98,8 +98,14 @@ export const getMyBookings = (url) => {
   );
 };
 export const AcceptMyBookings = (id, params) => {
-  // console.log("urlurlurl>>>", url);
+  console.log("urlurlurl>>>", params);
   return HTTP_CLIENT.put(`${ENDPOINTS.ACCEPTMYBOOKINGS}${id}`, params);
+};
+export const PutLocation = (id, params) => {
+  return HTTP_CLIENT.put(`${ENDPOINTS.LOCATION}${id}`, params);
+};
+export const GetLocation = async (id) => {
+  return await HTTP_CLIENT.get(`${ENDPOINTS.LOCATION}${id}`);
 };
 export const getBookingRequests = () => {
   return HTTP_CLIENT.get(ENDPOINTS.GETBOOKINGREQUESTS);

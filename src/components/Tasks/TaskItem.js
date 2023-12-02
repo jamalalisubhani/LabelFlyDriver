@@ -74,7 +74,7 @@ export default function TaskItem({ item, refreshfunc }) {
       item?.pickupLocation?.coordinates[0],
       item?.pickupLocation?.coordinates[1]
     ).then((address) => {
-      console.log("--------   pickupLocation   ------->", address);
+      // console.log("--------   pickupLocation   ------->", address);
       setPickAdress(
         `${!!address[0]?.name ? address[0]?.name : ""}, ${
           !!address[0]?.country ? address[0]?.country : ""
@@ -122,7 +122,13 @@ export default function TaskItem({ item, refreshfunc }) {
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity style={styles.seeDetailButton}>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(item);
+              navigation.navigate("taskdetails", { id: item?._id });
+            }}
+            style={styles.seeDetailButton}
+          >
             <Text style={styles.seeDetailText}>See Details</Text>
           </TouchableOpacity>
           <TouchableOpacity

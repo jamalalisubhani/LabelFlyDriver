@@ -14,7 +14,9 @@ const ENDPOINTS = {
   UPDATEDRIVER: "api/v1/users/update_driver/",
   UPDATEDRIVERFIELD: "api/v1/users/add_driver_fields/",
   GETMYBOOKINGS: "/api/v1/bookings/driver_booking_list",
-  ACCEPTMYBOOKINGS: "/api/v1/bookings/driver/accept/",
+  LOCATION: "/api/v1/location/",
+  ACCEPTMYBOOKINGS: "api/v1/bookings/driver/accept/",
+
   GETBOOKINGREQUESTS: "api/v1/bookings/driver/requests",
   MY_RATING: "api/v1/reviews/driver/my_ratings",
   GET_PACKAGE_BY_ID: "api/v1/packages/",

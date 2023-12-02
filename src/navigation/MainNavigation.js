@@ -23,6 +23,7 @@ import RegisterUploadSelfieScreen from "../screens/Authentications/Register/Regi
 import VehicleInformationScreen from "../screens/Profile/VehicleInformationScreen";
 import MyDocumentsScreen from "../screens/Profile/MyDocumentsScreen";
 import { useDispatch, useSelector } from "react-redux";
+import TaskDetails from "../components/Tasks/TaskDetails";
 
 const Stack = createNativeStackNavigator();
 function Navigation() {
@@ -95,6 +96,7 @@ function Navigation() {
           name="LanguageSelectionScreen"
           component={LanguageSelectionScreen}
         />
+        <Stack.Screen name="taskdetails" component={TaskDetails} />
         <Stack.Screen
           name="NotificationScreen"
           component={NotificationScreen}
