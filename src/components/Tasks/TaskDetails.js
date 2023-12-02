@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getLocation } from "../../utils/Shared/Functions";
 import {
@@ -7,13 +7,30 @@ import {
   PutLocation,
 } from "../../utils/auth.service";
 import { SocketContext } from "../../utils/SocketProvider";
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from "react-native-indicators";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const TaskDetailsComp = ({ socket, route }) => {
+const TaskDetailsComp = ({ socket, route, navigation }) => {
   const [locationapi, setlocationapi] = useState();
+  const [update, setupdate] = useState(false);
+
   console.log(route?.params?.id);
-  setInterval(() => {
+  useEffect(() => {
     interval();
-  }, 30 * 1000);
+    setInterval(() => {
+      interval();
+    }, 30 * 1000);
+  }, []);
 
   useEffect(() => {
     if (locationapi?.chatRoom) {
@@ -21,6 +38,7 @@ const TaskDetailsComp = ({ socket, route }) => {
     }
   }, [locationapi?.chatRoom]);
   const interval = async () => {
+    // setupdate(true);
     let latlog = await getLocation();
 
     latlog.time = "10 min";
@@ -30,7 +48,11 @@ const TaskDetailsComp = ({ socket, route }) => {
         console.log("resresresres>>>-------->>>>>", res?.data);
       })
       .catch(() => {})
-      .finally(() => {});
+      .finally(() => {
+        setTimeout(() => {
+          // setupdate(false);
+        }, 200);
+      });
 
     // AcceptMyBookings(route?.params?.id, {
     //   latitude: 11.453512,
@@ -50,10 +72,27 @@ const TaskDetailsComp = ({ socket, route }) => {
     //   })
     //   .finally(() => {});
   };
-
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>TaskDetails</Text>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={{
+          position: "absolute",
+          top: insets.top + 20,
+
+          left: 20,
+        }}
+      >
+        <Text>{"< back"}</Text>
+      </TouchableOpacity>
+      <View style={{ height: 70 }}>
+        <WaveIndicator />
+      </View>
+
+      <Text>Updating your location every 30 Sec</Text>
     </View>
   );
 };
