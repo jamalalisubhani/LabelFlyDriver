@@ -16,9 +16,6 @@ const TaskDetailsComp = ({ socket, route }) => {
   }, 30 * 1000);
 
   useEffect(() => {
-    getloc();
-  }, []);
-  useEffect(() => {
     if (locationapi?.chatRoom) {
       socket.emit("location tracking", locationapi?.chatRoom);
     }
@@ -27,10 +24,10 @@ const TaskDetailsComp = ({ socket, route }) => {
     let latlog = await getLocation();
 
     latlog.time = "10 min";
-    PutLocation(locationapi?._id, latlog)
+    PutLocation(route?.params?.id, latlog)
       .then((res) => {
         socket.emit("location tracking", locationapi?.chatRoom);
-        console.log("resresresres>>>", res);
+        console.log("resresresres>>>-------->>>>>", res?.data);
       })
       .catch(() => {})
       .finally(() => {});
@@ -53,23 +50,9 @@ const TaskDetailsComp = ({ socket, route }) => {
     //   })
     //   .finally(() => {});
   };
-  const getloc = async () => {
-    GetLocation(route?.params?.id)
-      .then((res) => {
-        setlocationapi(res?.data?.data);
-      })
-      .catch((e) => {
-        console.log("resresresresresresresresres0000000>eee>", e);
-      })
-      .finally(() => {});
-  };
 
-  console.log(
-    "getLocationgetLocationgetLocationgetLocationgetLocationgetLocation",
-    locationapi?.chatRoom
-  );
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>TaskDetails</Text>
     </View>
   );
